@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIMIATURMINHA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: uma única tela — cartão de entrada com escolha da turma e senha, sobre fundo roxo com formas nas cores do uniforme */
+:root{
+  --roxo:#4B2C8F; --roxo-esc:#2F1A63; --roxo-cl:#9B8CD0; --roxo-bg:#ECE7FA;
+  --amarelo:#FFD23F; --amarelo-cl:#FFF1B8; --amarelo-esc:#A37E00;
+  --azul:#8FD3F4; --azul-cl:#DDF3FD; --azul-esc:#1E88C7;
+  --laranja:#F26B21; --laranja-cl:#FFE0CC;
+  --branco:#FFFFFF; --fundo:#FBFAFF; --texto:#24174A; --suave:#6A5F8C; --linha:#E7E2F5;
+  --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --f-texto:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--roxo);color:var(--texto);font-family:var(--f-texto);font-size:16px;line-height:1.55}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--laranja);outline-offset:2px}
+
+#login{min-height:100vh;display:grid;place-items:center;position:relative;overflow:hidden;
+  background:var(--roxo);padding-block:40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bolha{position:absolute;border-radius:50%;pointer-events:none}
+.b1{width:340px;height:340px;background:var(--amarelo);top:-120px;left:-100px}
+.b2{width:220px;height:220px;background:var(--azul);bottom:-70px;right:8%}
+.b3{width:120px;height:120px;background:var(--laranja);top:18%;right:-30px}
+.tri{position:absolute;width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;border-bottom:64px solid var(--laranja);pointer-events:none}
+.t1{bottom:14%;left:10%;transform:rotate(-14deg)}
+.t2{top:10%;right:28%;border-bottom-color:var(--branco);transform:rotate(18deg) scale(.5)}
+.cartao{position:relative;z-index:1;background:var(--branco);border-radius:28px;width:100%;max-width:440px;
+  padding:32px 28px 28px;box-shadow:0 14px 0 var(--roxo-esc)}
+.marca{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:18px;text-align:center}
+.marca small{font-family:var(--f-display);font-weight:800;color:var(--laranja);letter-spacing:.14em;font-size:.8rem;text-transform:uppercase}
+.logo{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,8vw,2.6rem);color:var(--roxo);letter-spacing:-.01em;line-height:1}
+.logo .a{color:var(--laranja)}
+.listras{display:flex;gap:6px;margin-top:8px}
+.listras i{width:28px;height:7px;border-radius:4px}
+.sub{margin:0 0 18px;text-align:center;color:var(--suave)}
+.rot{font-weight:800;font-size:.9rem;display:block;margin-bottom:8px}
+.turmas{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0;padding:0}
+.turmas legend{padding:0}
+.turma{position:relative;display:block;text-decoration:none;border-radius:20px}
+.turma input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.turma span{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;padding:16px 0 12px;box-shadow:0 5px 0 var(--c);
+  background:var(--c-cl);color:var(--c);border:3px solid transparent;font-family:var(--f-display);font-weight:800;line-height:1;transition:transform .12s}
+.turma span b{font-size:2.2rem}
+.turma span small{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase}
+.turma input:checked + span{background:var(--c);color:var(--branco);transform:translateY(-2px);box-shadow:0 4px 0 var(--roxo-esc)}
+.turma input:focus-visible + span{border-color:var(--laranja)}
+.campo{display:flex;gap:8px;border:3px solid var(--linha);border-radius:16px;padding:4px 4px 4px 14px;background:var(--fundo);transition:border-color .2s}
+.campo:focus-within{border-color:var(--roxo-cl)}
+.campo input{flex:1;min-width:0;border:0;background:transparent;font-size:1.05rem;padding:10px 0;color:var(--texto)}
+.campo input:focus{outline:none}
+.olho{border:0;background:var(--azul-cl);color:var(--roxo);border-radius:12px;padding:0 12px;font-weight:800;cursor:pointer;font-size:.85rem}
+.btn{display:block;width:100%;margin-top:16px;border:0;border-radius:16px;padding:14px;background:var(--amarelo);color:var(--roxo-esc);text-align:center;text-decoration:none;
+  font-family:var(--f-display);font-weight:800;font-size:1.25rem;cursor:pointer;box-shadow:0 5px 0 #D9A900;transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #D9A900}
+.erro{color:#C2410C;background:var(--laranja-cl);border-radius:12px;padding:10px 12px;margin-top:12px;font-weight:700;font-size:.92rem}
+.ok{margin-top:16px!important;color:var(--roxo-esc);background:var(--azul-cl);border-radius:12px;padding:12px;margin-top:12px;font-weight:700;font-size:.95rem;text-align:center}
+.treme{animation:treme .35s}
+@keyframes treme{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+/* ===== ANIMAÇÃO DE ENTRADA ===== */
+.b1{animation:chegaE .9s cubic-bezier(.2,1.4,.4,1) both, flutua 7s ease-in-out 1s infinite}
+.b2{animation:chegaB .9s cubic-bezier(.2,1.4,.4,1) .15s both, flutua 8s ease-in-out 1.2s infinite reverse}
+.b3{animation:chegaD .9s cubic-bezier(.2,1.4,.4,1) .3s both, flutua 6s ease-in-out 1.4s infinite}
+.t1{animation:giraT1 1s cubic-bezier(.2,1.4,.4,1) .35s both, balanca1 5s ease-in-out 1.5s infinite}
+.t2{animation:giraT2 1s cubic-bezier(.2,1.4,.4,1) .45s both, balanca2 6s ease-in-out 1.6s infinite}
+.cartao{animation:pula .8s cubic-bezier(.2,1.5,.4,1) .2s both}
+.marca small{animation:sobe .5s ease-out .6s both}
+.logo span.l{display:inline-block;animation:letra .6s cubic-bezier(.2,1.8,.4,1) both;animation-delay:calc(.7s + var(--i)*.05s)}
+.listras i{animation:estica .5s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(1.3s + var(--i)*.08s);transform-origin:left}
+.sub{animation:sobe .5s ease-out both}
+.sub{animation-delay:1.4s}.turmas legend{animation-delay:1.5s}
+.turma span{animation:popa .45s cubic-bezier(.2,1.8,.4,1) both;animation-delay:calc(1.55s + var(--i)*.06s)}
+label.rot{animation-delay:2s}.campo{animation-delay:2.05s}#entrar{animation-delay:2.15s}
+#entrar{animation:sobe .5s ease-out 2.15s both, brilha 2.4s ease-in-out 3s infinite}
+@keyframes chegaE{from{transform:translate(-160px,-160px) scale(.4);opacity:.3}}
+@keyframes chegaB{from{transform:translateY(200px) scale(.4);opacity:.3}}
+@keyframes chegaD{from{transform:translateX(160px) scale(.4);opacity:.3}}
+@keyframes giraT1{from{transform:translateY(160px) rotate(-200deg);opacity:.3}}
+@keyframes giraT2{from{transform:translateY(-160px) rotate(220deg) scale(.5);opacity:.3}}
+@keyframes flutua{50%{translate:0 -18px}}
+@keyframes balanca1{50%{transform:rotate(-4deg) translateY(-10px)}}
+@keyframes balanca2{50%{transform:rotate(30deg) scale(.55)}}
+@keyframes pula{from{transform:translateY(60px) scale(.85);opacity:.3}}
+@keyframes sobe{from{transform:translateY(12px);opacity:.3}}
+@keyframes letra{from{transform:translateY(-40px) scale(.6) rotate(-12deg);opacity:.3}}
+@keyframes estica{from{transform:scaleX(0)}}
+@keyframes popa{from{transform:scale(.5)}}
+@keyframes brilha{0%,100%{box-shadow:0 5px 0 #D9A900}50%{box-shadow:0 5px 0 #D9A900,0 0 0 6px rgba(255,210,63,.45)}}
+.cartao.treme{animation:treme .35s}
+/* ===== MAIS ANIMAÇÃO ===== */
+#ceu{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+#confete{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:20}
+.bolha,.tri{z-index:0}
+.cartao{transform-style:preserve-3d;will-change:transform}
+.logo.onda span.l{animation:onda .6s ease-in-out both;animation-delay:calc(var(--i)*.06s)}
+@keyframes onda{40%{transform:translateY(-12px) rotate(-6deg)}70%{transform:translateY(3px)}}
+.logo span.l:hover{animation:pulinho .5s cubic-bezier(.2,1.8,.4,1)}
+@keyframes pulinho{40%{transform:translateY(-14px) scale(1.25) rotate(8deg)}}
+.turma:hover span{transform:translateY(-4px) rotate(-3deg);background:var(--c);color:var(--branco);box-shadow:0 6px 0 var(--roxo-esc)}
+.turma:active span{transform:translateY(3px);box-shadow:0 1px 0 var(--roxo-esc)}
+.turma.toque span{animation:escolhe .5s cubic-bezier(.2,1.8,.4,1)}
+.turma.toque span b{animation:gira .6s ease-out}
+.turma:focus-visible span{border-color:var(--laranja)}
+.turma input:checked + span{animation:escolhe .5s cubic-bezier(.2,1.8,.4,1)}
+@keyframes escolhe{0%{transform:scale(.8)}50%{transform:scale(1.15) rotate(4deg)}100%{transform:translateY(-2px)}}
+.turma input:checked + span b{animation:gira .6s ease-out}
+@keyframes gira{from{transform:rotate(-360deg) scale(.5)}}
+#entrar:hover{animation:mexe .5s ease-in-out}
+@keyframes mexe{25%{transform:rotate(-2deg) scale(1.03)}75%{transform:rotate(2deg) scale(1.03)}}
+.campo:focus-within{animation:respira 1.6s ease-in-out infinite}
+@keyframes respira{50%{box-shadow:0 0 0 6px rgba(143,211,244,.45)}}
+.ok{animation:popa .5s cubic-bezier(.2,1.8,.4,1)}
+.estrela{position:fixed;pointer-events:none;z-index:15;font-size:14px;animation:somE .8s ease-out forwards}
+@keyframes somE{to{transform:translate(var(--dx),var(--dy)) scale(.2) rotate(180deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+<div id="login">
+  <canvas id="ceu" aria-hidden="true"></canvas>
+  <canvas id="confete" aria-hidden="true"></canvas>
+  <span class="bolha b1"></span><span class="bolha b2"></span><span class="bolha b3"></span>
+  <span class="tri t1"></span><span class="tri t2"></span>
+  <div class="cartao" id="form-login">
+    <div class="marca">
+      <div class="logo" id="logo" aria-label="SIMIATURMINHA">SIMIATURMINHA</div>
+      <div class="listras" aria-hidden="true">
+        <i style="background:var(--roxo);--i:0"></i><i style="background:var(--amarelo);--i:1"></i><i style="background:var(--azul);--i:2"></i><i style="background:var(--laranja);--i:3"></i>
+      </div>
+    </div>
+    <p class="sub">Toque na sua turma para começar o jogo!</p>
+    <nav class="turmas" id="turmas" aria-label="Turmas"></nav>
+    <div class="ok" id="ok" hidden></div>
+  </div>
+</div>
+
+<script>
+/* ===== LINK DO JOGO DE CADA TURMA — cole entre as aspas ===== */
+const LINKS = {
+  "2":"https://www.simiaturminha.com.br/2ano/",
+  "3":"https://www.simiaturminha.com.br/3ano/",
+  "4":"https://www.simiaturminha.com.br/4ano/",
+  "5":"https://www.simiaturminha.com.br/5ano/",
+  "6":"https://www.simiaturminha.com.br/6ano/",
+  "7":"https://www.simiaturminha.com.br/7ano/",
+  "8":"https://www.simiaturminha.com.br/8ano/",
+  "9":"https://www.simiaturminha.com.br/9ano/"
+};
+
+const $ = id => document.getElementById(id);
+/* Letras do logo entram uma a uma; TUR fica laranja */
+$("logo").innerHTML = [..."SIMIATURMINHA"].map((c,i)=>`<span class="l${i>=5&&i<=7?" a":""}" style="--i:${i}" aria-hidden="true">${c}</span>`).join("");
+const cores = [["var(--laranja)","var(--laranja-cl)"],["var(--azul-esc)","var(--azul-cl)"],["var(--amarelo-esc)","var(--amarelo-cl)"],["var(--roxo)","var(--roxo-bg)"]];
+$("turmas").innerHTML = Object.keys(LINKS).map((k,i)=>{
+  const [c,cl]=cores[i%4];
+  return `<a class="turma" id="tm${k}" data-t="${k}" href="${LINKS[k]||"#"}" target="_blank" rel="noopener" style="--c:${c};--c-cl:${cl}"><span style="--i:${i}"><b>${k}º</b><small>ano</small></span></a>`;
+}).join("");
+
+/* ===== EFEITOS ===== */
+const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PAL = ["#FFD23F","#8FD3F4","#F26B21","#FFFFFF","#9B8CD0"];
+
+/* Céu: formas subindo devagar no fundo */
+(function(){
+  const cv=$("ceu"), cx=cv.getContext("2d"); let W,H,ps=[];
+  function tam(){W=cv.width=cv.offsetWidth*devicePixelRatio;H=cv.height=cv.offsetHeight*devicePixelRatio}
+  tam(); addEventListener("resize",tam);
+  for(let i=0;i<34;i++) ps.push(nova(true));
+  function nova(qualquer){return{x:Math.random()*W,y:qualquer?Math.random()*H:H+40,r:(6+Math.random()*14)*devicePixelRatio,
+    v:(.25+Math.random()*.7)*devicePixelRatio,a:Math.random()*6.28,va:(Math.random()-.5)*.03,t:Math.floor(Math.random()*4),c:PAL[Math.floor(Math.random()*PAL.length)],o:.25+Math.random()*.45,w:Math.random()*6.28}}
+  function forma(p){cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.globalAlpha=p.o;cx.fillStyle=p.c;cx.strokeStyle=p.c;cx.lineWidth=3*devicePixelRatio;cx.beginPath();
+    if(p.t===0){cx.arc(0,0,p.r/2,0,6.28);cx.fill()}
+    else if(p.t===1){cx.moveTo(0,-p.r/1.6);cx.lineTo(p.r/1.6,p.r/2.2);cx.lineTo(-p.r/1.6,p.r/2.2);cx.closePath();cx.fill()}
+    else if(p.t===2){for(let k=0;k<10;k++){const rr=k%2?p.r/4:p.r/1.7,an=k*Math.PI/5;cx.lineTo(Math.sin(an)*rr,-Math.cos(an)*rr)}cx.closePath();cx.fill()}
+    else{cx.moveTo(-p.r/2,0);cx.lineTo(p.r/2,0);cx.moveTo(0,-p.r/2);cx.lineTo(0,p.r/2);cx.stroke()}
+    cx.restore()}
+  function loop(){cx.clearRect(0,0,W,H);for(const p of ps){p.y-=p.v;p.w+=.02;p.x+=Math.sin(p.w)*.4;p.a+=p.va;if(p.y<-40)Object.assign(p,nova(false));forma(p)}if(!calmo)requestAnimationFrame(loop)}
+  loop();
+})();
+
+/* Confete */
+const cf=$("confete"), cfx=cf.getContext("2d"); let pecas=[], rodando=false;
+function tamC(){cf.width=innerWidth*devicePixelRatio;cf.height=innerHeight*devicePixelRatio} tamC(); addEventListener("resize",tamC);
+function confete(n){ if(calmo) return; const d=devicePixelRatio;
+  for(let i=0;i<n;i++) pecas.push({x:cf.width/2,y:cf.height*.45,vx:(Math.random()-.5)*22*d,vy:(-Math.random()*20-6)*d,g:.55*d,
+    w:(6+Math.random()*8)*d,h:(4+Math.random()*6)*d,a:Math.random()*6.28,va:(Math.random()-.5)*.4,c:PAL[i%PAL.length],vida:140});
+  if(!rodando){rodando=true;requestAnimationFrame(passo)} }
+function passo(){ cfx.clearRect(0,0,cf.width,cf.height);
+  pecas=pecas.filter(p=>p.vida-->0 && p.y<cf.height+50);
+  for(const p of pecas){p.vy+=p.g;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;cfx.save();cfx.translate(p.x,p.y);cfx.rotate(p.a);cfx.fillStyle=p.c;cfx.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.cos(p.a*2)));cfx.restore()}
+  if(pecas.length) requestAnimationFrame(passo); else {rodando=false;cfx.clearRect(0,0,cf.width,cf.height)} }
+setTimeout(()=>confete(70),1300);
+
+/* Onda nas letras do logo a cada 5 segundos */
+if(!calmo) setInterval(()=>{const l=$("logo");l.classList.remove("onda");void l.offsetWidth;l.classList.add("onda")},5000);
+
+/* Cartão inclina seguindo o mouse */
+const card=$("form-login");
+if(!calmo && matchMedia("(hover:hover)").matches){
+  addEventListener("mousemove",e=>{const x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);
+    if(!card.classList.contains("treme")) card.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg)`});
+  card.addEventListener("animationend",e=>{if(e.animationName==="treme")card.classList.remove("treme")});
+}
+
+/* Clique na turma: estrelinhas + confete e abre o jogo */
+document.querySelectorAll(".turma").forEach(a=>a.addEventListener("click",e=>{
+  const t=a.dataset.t;
+  if(!LINKS[t]){ e.preventDefault(); $("ok").hidden=false; $("ok").textContent=`O jogo do ${t}º ano vai abrir aqui em breve!`; }
+  else { $("ok").hidden=true; }
+  confete(90); $("logo").classList.remove("onda"); void $("logo").offsetWidth; $("logo").classList.add("onda");
+  a.classList.remove("toque"); void a.offsetWidth; a.classList.add("toque");
+  if(calmo) return;
+  const b=a.getBoundingClientRect();
+  for(let i=0;i<8;i++){const s=document.createElement("span");s.className="estrela";s.textContent="★";
+    s.style.left=(b.left+b.width/2-7)+"px";s.style.top=(b.top+b.height/2-7)+"px";s.style.color=PAL[i%PAL.length];
+    const an=i/8*6.28;s.style.setProperty("--dx",Math.cos(an)*56+"px");s.style.setProperty("--dy",Math.sin(an)*56+"px");
+    document.body.appendChild(s);setTimeout(()=>s.remove(),850)}
+}));
+</script>
+</body>
+</html>
